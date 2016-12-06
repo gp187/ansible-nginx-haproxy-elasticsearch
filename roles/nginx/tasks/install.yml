@@ -1,0 +1,38 @@
+- name: Check for installation
+  stat: path="/usr/local/nginx"
+  register: path
+
+- name: Clone nginx-builder project
+  git:
+    repo: "https://github.com/gp187/nginx-builder.git"
+    dest: "/tmp/nginx-builder"
+    force: yes
+  when: not path.stat.exists
+
+- name: Check for installation
+  stat: path="/usr/local/nginx"
+  register: path
+
+- name: Run build process
+  raw: "export PWD=/tmp/nginx-builder && cd /tmp/nginx-builder && ./install.sh --full --steroids"
+  args:
+    executable: /bin/bash
+  when: not path.stat.exists
+
+- name: Clean-up build
+  file:
+    path: "{{ item }}"
+    state: "absent"
+  with_items:
+    - "/tmp/nginx-builder"
+#    - "/home/{{ ansible_env.SUDO_USER}}/nginx-build"
+    - "/etc/init.d/nginx"
+
+- name: Fix PID file location in Nginx service definition
+  lineinfile:
+    dest: "/lib/systemd/system/nginx.service"
+    regexp: '^PIDFile'
+    line: "PIDFile={{ nginx_pid_file }}"
+
+- name: Reload SystemD definitions
+  command: systemctl daemon-reload

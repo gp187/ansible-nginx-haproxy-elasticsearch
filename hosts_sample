@@ -1,0 +1,13 @@
+[webservers]
+WEBSERVER_IP_1  ansible_ssh_port=22
+WEBSERVER_IP_2  ansible_port=23
+
+[elasticsearch_nodes]
+ES_SERVER_IP_1  ansible_port=24
+ES_SERVER_IP_2  ansible_port=25
+
+[es_backup]
+ES_BACKUP_IP_1  ansible_port=26
+
+[ha_proxy]
+HAPROXY_IP_1

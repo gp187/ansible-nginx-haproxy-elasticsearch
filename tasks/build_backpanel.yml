@@ -1,0 +1,15 @@
+- name: Clone projectFolder-backpanel project
+  git:
+    repo: "https://github.com/gov-ithub/projectFolder-backpanel.git"
+    dest: "{{ backpanel_folder }}"
+    force: yes
+
+- name: Installing npm packages
+  shell: "{{ item }}"
+  args:
+    chdir: "{{ backpanel_folder }}"
+  with_items:
+    - "/usr/bin/npm install"
+    - "/usr/local/bin/bower install --allow-root"
+    - "/usr/local/bin/gulp"
+

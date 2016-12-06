@@ -1,0 +1,17 @@
+---
+# tasks file for nginx
+
+- name: Intall nginx from source
+  include: "install.yml"
+  tags:
+    - nginx
+
+- name: Configure nginx service
+  include: "configure.yml"
+  notify:
+    - reload nginx
+  tags:
+    - configure
+
+- name: Start and enable Nginx service
+  service: name="nginx" state="started" enabled=yes

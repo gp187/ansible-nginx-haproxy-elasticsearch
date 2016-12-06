@@ -1,0 +1,10 @@
+- name: Clone projectFolder-spring-www project
+  git:
+    repo: "https://github.com/gov-ithub/projectFolder-spring-www.git"
+    dest: "/tmp/projectFolder-spring-www"
+    force: yes
+
+- name: Build projectFolder-spring-www
+  shell: "/usr/bin/mvn clean package"
+  args:
+    chdir: "/tmp/projectFolder-spring-www"

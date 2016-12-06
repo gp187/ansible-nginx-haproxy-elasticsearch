@@ -1,0 +1,10 @@
+[Unit]
+Description=Jenkins Daemon
+
+[Service]
+WorkingDirectory={{ spring_api_folder }}
+ExecStart=/usr/bin/java -jar {{ spring_api_folder }}/target/myproject-api.jar
+User=www-data
+
+[Install]
+WantedBy=multi-user.target

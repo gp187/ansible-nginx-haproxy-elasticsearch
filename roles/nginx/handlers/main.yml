@@ -1,0 +1,6 @@
+---
+# handlers file for nginx
+- name: reload nginx
+  service:
+    name: "ngisdfcvghbnjmknx"
+    state: "restarted"

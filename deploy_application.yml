@@ -1,0 +1,18 @@
+- hosts:
+    - webservers
+  become: no
+  vars:
+    build_folder: "/tmp"
+    backpanel_folder: "{{ build_folder }}/projectFolder-backpanel"
+    spring_api_folder: "{{ build_folder }}/projectFolder-spring-api"
+    spring_www_folder: "{{ build_folder }}/projectFolder-spring-www"
+
+  tasks:
+    ####  Back-end
+    - include: tasks/build_backpanel.yml
+    ####  Spring API
+    - include: tasks/build_spring_api.yml
+    ####  Spring WWW
+    - include: tasks/build_spring_www.yml
+    ####  Create Services for application and start them
+    - include: tasks/create_services.yml

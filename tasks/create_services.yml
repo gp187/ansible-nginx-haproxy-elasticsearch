@@ -1,0 +1,35 @@
+- name: Check service definition file
+  stat: path="/lib/systemd/system/projectFolder_api.service"
+  register: api_service
+
+- name: Generate service definition file
+  template:
+    src: "./templates/myproject_api.service.j2"
+    dest: "/lib/systemd/system/projectFolder_api.service"
+  when: not api_service.stat.exists
+  become: yes
+
+- name: Start and enable service
+  service:
+    name: "projectFolder_api"
+    state: "started"
+    enabled: yes
+  become: yes
+
+- name: Check service definition file
+  stat: path="/lib/systemd/system/projectFolder_www.service"
+  register: www_service
+
+- name: Generate service definition file
+  template:
+    src: "./templates/myproject_www.service.j2"
+    dest: "/lib/systemd/system/projectFolder_www.service"
+  when: not www_service.stat.exists
+  become: yes
+
+- name: Start and enable service
+  service:
+    name: "projectFolder_www"
+    state: "started"
+    enabled: yes
+  become: yes

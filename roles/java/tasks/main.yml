@@ -1,0 +1,29 @@
+---
+# tasks file for java
+- name: Install java and selinux bindings if OS is RedHat 7
+  yum: name={{ item }} state="present"
+  with_items:
+    - libselinux-python
+    - java-1.8.0-openjdk
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
+
+- name: Disable selinux if OS is RedHat7
+  selinux: state="disabled"
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
+
+- name: Add repository for oracle if OS is Ubuntu
+  apt_repository: repo='ppa:webupd8team/java'
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version|int >= 14
+
+- name: Accept Java 8 License automatically
+  debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version|int >= 14
+
+- name: Install java if OS is Ubuntu
+  apt: name={{ item }} state="present"
+  with_items:
+    - oracle-java8-installer
+    - ca-certificates
+    - oracle-java8-set-default
+    - maven
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version|int >= 14

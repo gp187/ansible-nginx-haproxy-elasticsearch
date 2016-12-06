@@ -1,0 +1,49 @@
+---
+# tasks file for elasticsearch
+- name: Get installation tar from elastic  website
+  get_url:
+    url: "https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/{{elasticsearch_version}}/elasticsearch-{{elasticsearch_version}}.tar.gz"
+    dest: "/tmp/elasticsearch-{{elasticsearch_version}}.tar.gz"
+    timeout: 30
+  when: install_method == "online"
+
+- name: Copy installation package from local machine
+  copy:
+    src: "{{ install_archive }}"
+    dest: "/tmp/elasticsearch-{{elasticsearch_version}}.tar.gz"
+  when: install_method == "offline"
+
+- name: Unpack archive
+  unarchive: src="/tmp/elasticsearch-{{elasticsearch_version}}.tar.gz" dest="/tmp" copy=No
+
+- name: Move ElasticSearch to installation folder
+  command: creates="{{ installation_folder }}" mv /tmp/elasticsearch-{{ elasticsearch_version }} {{ installation_folder }}
+
+- name: Configure Elasticsearch YAML
+  lineinfile: regexp="{{ item.regexp }}" line="{{ item.line }}" dest="{{ installation_folder }}/config/elasticsearch.yml"
+  with_items:
+    - { regexp: "cluster.name:", line: "cluster.name: '{{ cluster_name }}'" }
+    - { regexp: "node.name", line: "node.name: {{ node_name }}" }
+    - { regexp: "node.rack", line: "node.rack: {{ node_rack }}" }
+    - { regexp: "network.host:", line: "network.host: {{ ansible_default_ipv4.address }}" }
+    - { regexp: "http.port:", line: "http.port: {{ elasticsearch_port }}" }
+    - { regexp: "path.data:", line: "path.data: {{ data_folder }}" }
+    - { regexp: "path.logs:", line: "path.logs: {{ logs_folder }}" }
+    - { regexp: "discovery.zen.ping.unicast.hosts:", line: "discovery.zen.ping.unicast.hosts: [\"{{ nodes|join('\", \"') }}\"]" }
+
+- name: Create Elasticsearch user
+  user: name="elastic" home="{{ installation_folder }}" shell="/usr/sbin/nologin"
+
+- name: Change ownershipt os Elasticsearch home folder
+  file: path="{{installation_folder}}" owner="elastic" group="elastic" recurse=Yes
+
+- name: Copy service unit file if OS is RedHat 7
+  template: src="templates/elastic_redhat_service.j2" dest="/usr/lib/systemd/system/elasticsearch.service"
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7
+
+- name: Copy service init script if OS is Ubuntu
+  template: src="templates/elastic_ubuntu_service.j2" dest="/etc/init.d/elasticsearch" mode="0755"
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version|int >= 14
+
+- name: Enable ElasticSearch service and start it
+  service: name="elasticsearch" state="started" enabled=True

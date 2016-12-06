@@ -1,0 +1,24 @@
+- name: Generate nginx configuration file
+  template:
+    src: "nginx.conf.j2"
+    dest: "{{ nginx_conf_dir }}/nginx.conf"
+    mode: 0644
+
+- name: Generate nginx sites configuration
+  template:
+    src: "{{ item }}.conf.j2"
+    dest: "{{ nginx_conf_dir }}/sites-enabled/{{ item }}.conf"
+  with_items:
+    - api
+    - www
+    - upstreams
+
+- name: Disable the default site
+  file:
+    path: "{{nginx_conf_dir}}/sites-enabled/site.conf"
+    state: absent
+
+- name: Remove the default configuration
+  file:
+    path: "{{nginx_conf_dir}}/conf.d/default.conf"
+    state: absent

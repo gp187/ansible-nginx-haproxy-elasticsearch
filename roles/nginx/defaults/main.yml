@@ -1,0 +1,68 @@
+---
+# defaults file for nginx
+
+nginx_user: "{% if ansible_os_family == 'RedHat' or ansible_os_family == 'Suse' %}nginx{% elif ansible_os_family == 'Debian' %}www-data{% elif ansible_os_family == 'FreeBSD' %}www{% endif %}"
+nginx_group: "{{nginx_user}}"
+
+nginx_service_name: 'nginx'
+nginx_conf_dir: "/etc/nginx"
+nginx_daemon_mode: on
+nginx_official_repo_mainline: no
+
+nginx_worker_processes: "{% if ansible_processor_vcpus is defined %}{{ ansible_processor_vcpus }}{% else %}auto{% endif %}"
+
+worker_rlimit_core: "500M"
+working_directory: "/tmp/"
+
+nginx_pid_file: '/var/run/{{nginx_service_name}}.pid'
+
+nginx_worker_rlimit_nofile: 1024
+
+nginx_events_params:
+- worker_connections {% if nginx_max_clients is defined %}{{nginx_max_clients}}{% else %}512{% endif %}
+- use epoll
+- multi_accept on
+
+nginx_http_params:
+  ##
+  # Basic Settings
+  ##
+  - types_hash_max_size 2048
+  - server_tokens "off"
+  # Keep Alive
+  - sendfile "on"
+  - tcp_nopush "on"
+  - tcp_nodelay "on"
+  - keepalive_timeout 65
+  - keepalive_requests 100000
+  # Buffer Size
+  - client_body_buffer_size 128k
+  - client_max_body_size 10m
+  - client_header_buffer_size 1k
+  - large_client_header_buffers 4 4k
+  - output_buffers 1 32k
+  - postpone_output 1460
+  # Timeouts
+  - client_header_timeout 3m
+  - client_body_timeout 3m
+  - send_timeout 3m
+  # Static Asset Serving
+  - open_file_cache max=1000 inactive=20s
+  - open_file_cache_valid 30s
+  - open_file_cache_min_uses 5
+  - open_file_cache_errors off
+
+nginx_servers: "{{ groups['webservers'] }}"
+
+nginx_sites:
+  api:
+       project_name: "myproject"
+       server_name: "myproject.opes.uno"
+       listen: "7000 ssl"
+       index: "index.html index.htm"
+  www:
+       project_name:  "myproject"
+       server_name:  "myproject.opes.uno"
+       listen: "10000 ssl"
+       index: "index.html index.htm"
+       auth_file: ".codex"

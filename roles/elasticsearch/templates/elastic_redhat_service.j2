@@ -1,0 +1,17 @@
+[Unit]
+Description=Elastic Search
+After=network.target
+
+[Service]
+Type=forking
+PIDFile={{ installation_folder }}/elasticsearch.pid
+User=elastic
+Group=elastic
+WorkingDirectory={{ installation_folder }}
+ExecStart={{ installation_folder }}/bin/elasticsearch -d -p {{ installation_folder }}/elasticsearch.pid
+StandardOutput=journal
+StandardError=journal
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

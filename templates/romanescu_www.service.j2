@@ -1,0 +1,10 @@
+[Unit]
+Description=Jenkins Daemon
+
+[Service]
+WorkingDirectory={{ spring_www_folder }}
+ExecStart=/usr/bin/java -jar {{ spring_www_folder }}/target/myproject-web.jar
+User=www-data
+
+[Install]
+WantedBy=multi-user.target

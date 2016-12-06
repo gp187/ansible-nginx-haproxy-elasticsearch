@@ -1,0 +1,16 @@
+---
+# defaults file for elasticsearch
+install_method: "online"
+elasticsearch_version: "2.4.0"
+install_archive: "elasticsearch-{{ elasticsearch_version }}.tar.gz"
+install_url: ""
+installation_folder: "/opt/elasticsearch"
+elasticsearch_port: 9200
+
+cluster_name: "ES_Cluster"
+node_name: "{{ ansible_hostname }}"
+node_rack: 'RAC1'
+nodes: "{{groups['elasticsearch_nodes']}}"
+
+data_folder: "{{installation_folder}}/data"
+logs_folder: "{{installation_folder}}/logs"

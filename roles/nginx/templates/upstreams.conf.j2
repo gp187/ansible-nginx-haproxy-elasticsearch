@@ -1,0 +1,13 @@
+#{{ ansible_managed }}
+upstream spring_www {
+    server localhost:8080;
+}
+upstream spring_api {
+    server localhost:8090;
+}
+upstream elasticsearch{
+{% for es_node in groups['elasticsearch_nodes'] %}
+    server {{ es_node }};
+{% endfor %}
+    keepalive 15;
+}

@@ -1,0 +1,10 @@
+- name: Clone projectFolder-spring-api project
+  git:
+    repo: "https://github.com/gov-ithub/projectFolder-spring-api.git"
+    dest: "{{ spring_api_folder }}"
+    force: yes
+
+- name: Build projectFolder-spring-api
+  shell: "/usr/bin/mvn clean package"
+  args:
+    chdir: "{{ spring_api_folder }}"

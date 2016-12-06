@@ -1,0 +1,16 @@
+- name: Clone projectFolder-backpanel project
+  git:
+    repo: "https://github.com/gov-ithub/projectFolder-backpanel.git"
+    dest: "/tmp/projectFolder-backpanel"
+    force: yes
+
+- name: Installing npm packages
+  shell: "/usr/bin/npm install"
+  args:
+    chdir: "/tmp/projectFolder-backpanel"
+
+- name: Install bower packages
+  shell: "/usr/local/bin/bower install --allow-root"
+  args:
+    chdir: "/tmp/projectFolder-backpanel"
+

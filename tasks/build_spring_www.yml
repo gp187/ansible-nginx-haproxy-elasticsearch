@@ -1,0 +1,14 @@
+- name: Clone projectFolder-spring-www project
+  git:
+    repo: "https://github.com/gov-ithub/projectFolder-spring-www.git"
+    dest: "{{ spring_www_folder }}"
+    force: yes
+
+- name: Get backpanel app
+  shell: "cp -R {{ backpanel_folder }}/dist/* {{ spring_www_folder }}/src/main/webapp/"
+
+- name: Build projectFolder-spring-www
+  shell: "/usr/bin/mvn clean package"
+  args:
+    chdir: "{{ spring_www_folder }}"
+

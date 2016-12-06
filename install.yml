@@ -1,0 +1,30 @@
+- hosts: all
+  gather_facts: False
+
+  tasks:
+  - name: install python 2
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+- hosts: all
+  roles:
+    - basic
+
+- hosts:
+   - elasticsearch_nodes
+  roles:
+    - {
+      role: elasticsearch,
+      install_method: 'online',
+      elasticsearch_version: '2.4.0',
+      cluster_name: 'MyCluster',
+      when: no
+    }
+
+- hosts:
+    - webservers
+  roles:
+    - java
+    - nginx
+    - nodejs
+
+- include: deploy_application.yml

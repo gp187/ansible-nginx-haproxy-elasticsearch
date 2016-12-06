@@ -1,0 +1,17 @@
+---
+# tasks file for nodejs
+- name: Install nodejs and npm
+  apt: name={{ item }} state="present"
+  with_items:
+    - nodejs-legacy
+    - npm
+  when: ansible_os_family == "Debian" and ansible_distribution_major_version|int >= 14
+
+- name: Install npm packages
+  npm:
+    name: "{{ item }}"
+    global: yes
+    state: "present"
+  with_items:
+    - gulp
+    - bower
