@@ -1,8 +1,6 @@
 MyCluster Ansible playbook
 =========
 
-Playbook Ansible pentru instalarea si configurarea infrastructurii aplicatiei RomanescI
-
 Requirements
 ------------
 
@@ -26,12 +24,10 @@ Example usage
 Ideally, Ansible should be run from a host that has a private key with public keys installed on all hosts
 
 1. Running with private keys installed on all hosts
-
     
 > ansible-playbook  -b -i hosts -u ubuntu [playbook].yml
     
 2. Running with prompt for SSH password and sudo password
-    
     
 > ansible-playbook -bkK -i hosts -u ubuntu [playbook].yml
 
@@ -40,16 +36,3 @@ Ideally, Ansible should be run from a host that has a private key with public ke
 3. Testing the playbook syntax
 
 > ansible-playbook --syntax-check install.yml
-
-
-
-
-License
--------
-
-MIT
-
-Author Information
-------------------
-
-**Made with :heart: by [GovITHub](http://ithub.gov.ro)**
